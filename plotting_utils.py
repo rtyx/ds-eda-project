@@ -90,7 +90,8 @@ def plot_comparison_bar_chart(ax, categories, values, colors=None, title='', yla
     # Default colors if not provided
     if colors is None:
         default_colors = ['steelblue', 'coral', 'lightgreen', 'salmon', 'skyblue']
-        colors = default_colors[:len(categories)]
+        # Cycle through colors if there are more categories than default colors
+        colors = [default_colors[i % len(default_colors)] for i in range(len(categories))]
     
     # Create bar chart
     bars = ax.bar(categories, values, color=colors, alpha=0.7, edgecolor='black', linewidth=1.5)
