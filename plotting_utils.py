@@ -55,3 +55,73 @@ def plot_price_comparison(df, column_name, ax, title, zero_label, non_zero_label
     
     ax.grid(axis='y', alpha=0.3, linestyle='--')
 
+
+def plot_comparison_bar_chart(ax, categories, values, colors=None, title='', ylabel='', 
+                               value_format='${:,.0f}', add_grid=True, y_limit_factor=1.15):
+    """
+    Create a comparison bar chart with standardized styling.
+    
+    Parameters:
+    -----------
+    ax : matplotlib.axes.Axes
+        The axis to plot on
+    categories : list
+        List of category labels
+    values : list
+        List of values corresponding to categories
+    colors : list, optional
+        List of colors for each bar. Defaults to ['steelblue', 'coral', ...]
+    title : str, optional
+        Title for the plot
+    ylabel : str, optional
+        Label for the y-axis
+    value_format : str, optional
+        Format string for value labels on bars (default: '${:,.0f}')
+    add_grid : bool, optional
+        Whether to add grid lines (default: True)
+    y_limit_factor : float, optional
+        Factor to multiply max value for y-axis limit (default: 1.15)
+        
+    Returns:
+    --------
+    bars : BarContainer
+        The bar container object from matplotlib
+    """
+    # Default colors if not provided
+    if colors is None:
+        default_colors = ['steelblue', 'coral', 'lightgreen', 'salmon', 'skyblue']
+        # Cycle through colors if there are more categories than default colors
+        colors = [default_colors[i % len(default_colors)] for i in range(len(categories))]
+    
+    # Create bar chart
+    bars = ax.bar(categories, values, color=colors, alpha=0.7, edgecolor='black', linewidth=1.5)
+    
+    # Set title and labels
+    if title:
+        ax.set_title(title, fontsize=12, fontweight='bold', pad=10)
+    if ylabel:
+        ax.set_ylabel(ylabel, fontsize=10)
+    
+    # Set y-axis limit
+    if values and max(values) > 0:
+        ax.set_ylim(0, max(values) * y_limit_factor)
+    
+    # Add value labels on bars
+    for bar, value in zip(bars, values):
+        height = bar.get_height()
+        # Format the value label
+        try:
+            label = value_format.format(value)
+        except (ValueError, KeyError):
+            label = str(value)
+        
+        ax.text(bar.get_x() + bar.get_width()/2., height,
+                label,
+                ha='center', va='bottom', fontsize=10, fontweight='bold')
+    
+    # Add grid if requested
+    if add_grid:
+        ax.grid(axis='y', alpha=0.3, linestyle='--')
+    
+    return bars
+
